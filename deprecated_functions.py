@@ -2,7 +2,7 @@ from datetime import datetime
 import nasdaqdatalink
 import requests
 from apiclient import APIClient
-from market_data_api import get_company_overview_api_url
+from src.market_data_api import get_company_overview_api_url
 
 
 def apply_ticker_changes(trades_df, symbols, current_symbol, latest_trade_date):

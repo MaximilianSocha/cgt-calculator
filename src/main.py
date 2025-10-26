@@ -1,8 +1,8 @@
 from pathlib import Path
 import pandas as pd
-from lp_solver import minimise_tax_for_symbol_year
-from market_data_api import handle_splits_and_ticker_changes
-from output_excel_writer import export_capital_gains_to_excel
+from src.lp_solver import minimise_tax_for_symbol_year
+from src.market_data_api import handle_splits_and_ticker_changes
+from src.output_excel_writer import export_capital_gains_to_excel
 
 
 class CGTCalculator():
@@ -11,10 +11,21 @@ class CGTCalculator():
 
         # Initialise the trades data frame
         self.trades_df = pd.read_csv(trade_history_csv_path)
+        self._initialise_trades_df()
+        handle_splits_and_ticker_changes(self.trades_df)
 
-        # Normalise columns, this needs to be developed a bit
+
+    def _initialise_trades_df(self):
+        # Normalise columns
+        # TODO: parsing the input data needs to be made more robust!
         self.trades_df.columns = [c.strip().lower() for c in self.trades_df.columns]
-        required_cols = {"symbol", "side", "trade_date", "quantity", "transaction_amount"}
+        required_cols = {
+            "symbol",
+            "side",
+            "trade_date",
+            "quantity",
+            "transaction_amount",
+        }
         missing_cols = required_cols - set(self.trades_df.columns)
         if missing_cols:
             raise ValueError(f"Missing required columns: {missing_cols}")
@@ -25,8 +36,10 @@ class CGTCalculator():
         self.trades_df["symbol"] = [
             str(s).split(".")[0].upper() for s in self.trades_df["symbol"]
         ]
-        self.trades_df["trade_date"] = pd.to_datetime( # will need to handle parsing different date formats
-            self.trades_df["trade_date"], dayfirst=True
+        self.trades_df["trade_date"] = (
+            pd.to_datetime(  # will need to handle parsing different date formats
+                self.trades_df["trade_date"], dayfirst=True
+            )
         )
         self.trades_df["quantity"] = self.trades_df["quantity"].astype(float)
         self.trades_df["transaction_amount"] = self.trades_df[
@@ -36,8 +49,6 @@ class CGTCalculator():
             self.trades_df["trade_date"].apply(self._au_fin_year).astype(int)
         )
         self.trades_df["id"] = [i for i in range(len(self.trades_df["trade_date"]))]
-
-        handle_splits_and_ticker_changes(self.trades_df)
 
 
     def _au_fin_year(self, transaction_date):
@@ -207,8 +218,9 @@ class CGTCalculator():
                     result["taxable"] + short_sell_gain
                 )
 
-        export_capital_gains_to_excel(results_per_fy)
+        return results_per_fy
 
 
 if __name__ == "__main__":
-    CGTCalculator(Path(__file__).parent / "trade_history.csv").execute()
+    results_per_fy = CGTCalculator(Path(__file__).parent.parent / "trade_history.csv").execute()
+    export_capital_gains_to_excel(results_per_fy)

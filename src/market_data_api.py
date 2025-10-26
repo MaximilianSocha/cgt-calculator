@@ -59,12 +59,10 @@ def handle_splits_and_ticker_changes(trades_df):
         # REMOVE LATER, JUST FOR TESTING
         if symbol not in (
             "NVDA",
-            # "TQQQ",
-            # "TSLA",
-            # "GOOG",
-            # "META",
-            # "NAB",
-            # "AMZN",
+            "TQQQ",
+            "TSLA",
+            "GOOG",
+            "AMZN",
             ):
                 continue
 
