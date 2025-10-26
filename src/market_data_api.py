@@ -67,5 +67,7 @@ def handle_splits_and_ticker_changes(trades_df):
                 continue
 
         # Download ticker change data from here https://stockanalysis.com/actions/changes/2022/
+        # and if needed from https://www.asx.com.au/markets/market-resources/asx-codes-and-descriptors/asx-code-changes
+        # It will only have to be updated once a year around June/July, so no need for API
         #apply_ticker_changes(trades_df, symbols, symbol, trade_dates[-1])
         apply_stock_splits(trades_df, symbol, trade_dates)

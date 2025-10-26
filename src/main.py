@@ -1,19 +1,16 @@
 from pathlib import Path
 import pandas as pd
-from src.lp_solver import minimise_tax_for_symbol_year
-from src.market_data_api import handle_splits_and_ticker_changes
-from src.output_excel_writer import export_capital_gains_to_excel
+from lp_solver import minimise_tax_for_symbol_year
+from market_data_api import handle_splits_and_ticker_changes
+from output_excel_writer import export_capital_gains_to_excel
 
 
-class CGTCalculator():
-
+class CGTCalculator:
     def __init__(self, trade_history_csv_path):
-
         # Initialise the trades data frame
         self.trades_df = pd.read_csv(trade_history_csv_path)
         self._initialise_trades_df()
         handle_splits_and_ticker_changes(self.trades_df)
-
 
     def _initialise_trades_df(self):
         # Normalise columns
@@ -50,7 +47,6 @@ class CGTCalculator():
         )
         self.trades_df["id"] = [i for i in range(len(self.trades_df["trade_date"]))]
 
-
     def _au_fin_year(self, transaction_date):
         # FY runs 1 Jul–30 Jun; FY label is the year ending (e.g., 30/06/2025 -> "2025")
         return (
@@ -59,8 +55,9 @@ class CGTCalculator():
             else transaction_date.year
         )
 
-
-    def _calculate_short_sell_gain(self, sell_df, qty_difference, sell_buy_pairs_for_symbol):
+    def _calculate_short_sell_gain(
+        self, sell_df, qty_difference, sell_buy_pairs_for_symbol
+    ):
         """
         Modify sell df to not include short selling on symbol and return gain from short selling.
         """
@@ -83,7 +80,7 @@ class CGTCalculator():
                 )
 
                 return short_sell_gain
-            
+
             else:
                 sell_df.loc[row_index, "quantity"] = 0
                 qty_difference -= sell_trade["quantity"]
@@ -100,7 +97,6 @@ class CGTCalculator():
                 )
 
         return short_sell_gain
-
 
     def _extract_trades(self, trades_df, used_buy_trades={}):
         trades = []
@@ -122,7 +118,6 @@ class CGTCalculator():
 
         return trades
 
-
     def execute(self):
         used_buy_trades = {}  # key is id and value is quantity used
         results_per_fy = {}
@@ -138,7 +133,6 @@ class CGTCalculator():
             )
 
             for symbol in sorted(self.trades_df["symbol"].unique()):
-
                 buy_trades_df = self.trades_df[
                     (self.trades_df["symbol"] == symbol)
                     & (self.trades_df["side"] == "BUY")
@@ -166,7 +160,9 @@ class CGTCalculator():
                 total_sell_qty = solver_sells_df["quantity"].sum()
                 total_buy_qty = solver_buys_df["qty_avail"].sum()
                 if total_buy_qty < total_sell_qty:
-                    response = input(f"Short selling detected on symbol: {symbol}.\nDo you wish to proceed? (Y/N)")
+                    response = input(
+                        f"Short selling detected on symbol: {symbol}.\nDo you wish to proceed? (Y/N)"
+                    )
                     if response == "Y":
                         results_per_fy[fy]["buy_and_sell_pairs"][symbol] = []
                         short_sell_gain = self._calculate_short_sell_gain(
@@ -208,7 +204,7 @@ class CGTCalculator():
                         ]
 
                 results_per_fy[fy]["total_capital_gain"] += (
-                    result["short_term"] + result["long_term"]
+                    result["short_term"] + result["long_term"] + short_sell_gain
                 )
                 results_per_fy[fy]["capital_gain_discount"] += 0.5 * result["long_term"]
                 results_per_fy[fy]["loss"] += result["loss"]
@@ -222,5 +218,9 @@ class CGTCalculator():
 
 
 if __name__ == "__main__":
-    results_per_fy = CGTCalculator(Path(__file__).parent.parent / "trade_history.csv").execute()
+    # Run with: python3 -m src.main
+    # Debug with launch.json
+    results_per_fy = CGTCalculator(
+        Path(__file__).parent.parent / "trade_history.csv"
+    ).execute()
     export_capital_gains_to_excel(results_per_fy)

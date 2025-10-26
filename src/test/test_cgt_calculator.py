@@ -4,7 +4,7 @@ import numpy as np
 from pandas import Timestamp
 import pytest
 
-from test.mock_cgt_calculator import MockCGTCalculator
+from mock_cgt_calculator import MockCGTCalculator
 
 @pytest.fixture
 def path_to_csv():
@@ -18,11 +18,7 @@ def test_cgt_calculator(path_to_csv):
     """
 
     results_per_fy = MockCGTCalculator(path_to_csv).execute()
-
-    print(results_per_fy)
-
     assert results_per_fy == TEST_RESULT
-
 
 TEST_RESULT = {
     np.int64(2019): {
@@ -108,7 +104,7 @@ TEST_RESULT = {
                 ),
             ],
         },
-        "total_capital_gain": np.float64(23173.16299065421),
+        "total_capital_gain": np.float64(35543.378435754195),
         "capital_gain_discount": np.float64(0.0),
         "loss": np.float64(2167.21843575419),
         "short_sell_gain": np.float64(12370.215445099984),

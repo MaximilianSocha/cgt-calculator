@@ -1,0 +1,6 @@
+The web page should be vey simple, blue head with name (tantatively CGT Calculator)
+Then there will be 2 main sections, instructions and calculator output
+instructions will have short explanation and then section for each bank website (drop downs) and then short
+statement about splits, ticker changes, and short selling, with drops downs for each of
+these to explain further.
+Calculator output will have image of ouput excel sheet and breakdown of what the fields mean
