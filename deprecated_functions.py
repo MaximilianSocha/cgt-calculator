@@ -3,6 +3,14 @@ import nasdaqdatalink
 import requests
 from apiclient import APIClient
 from src.market_data_api import get_company_overview_api_url
+import finnhub
+import requests
+from yahoo_fin.stock_info import get_data
+import requests_html
+import yfinance as yf
+
+from src.market_data_api import get_alpha_vantage_api_key
+
 
 
 def apply_ticker_changes(trades_df, symbols, current_symbol, latest_trade_date):
@@ -104,4 +112,17 @@ def apply_stock_splits(client, trades_df, symbol, trade_dates):
             col_name = "quantity"
             # multiply the quantity to reflect all splits which occurred after trade date
             trades_df[row_index, col_name] *= split_factor
+
+
+if __name__ == "__main__":
+    # url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=FB&apikey={get_alpha_vantage_api_key()}"
+    # r = requests.get(url)
+    # data = r.json()
+    # print(data)
+
+    # finnhub_client = finnhub.Client(api_key=FINN_HUB_API_KEY)
+    # print(finnhub_client.stock_splits("AAPL", _from="2000-01-01", to="2020-01-01"))
+    # print(finnhub_client.symbol_change(_from="2022-10-01", to="2022-10-11"))
+
+    print(yf.Ticker("FB").info)
 

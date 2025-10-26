@@ -66,5 +66,6 @@ def handle_splits_and_ticker_changes(trades_df):
             ):
                 continue
 
+        # Download ticker change data from here https://stockanalysis.com/actions/changes/2022/
         #apply_ticker_changes(trades_df, symbols, symbol, trade_dates[-1])
         apply_stock_splits(trades_df, symbol, trade_dates)
