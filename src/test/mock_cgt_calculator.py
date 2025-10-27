@@ -1,6 +1,6 @@
 from datetime import datetime
 import pandas as pd
-from src.main import CGTCalculator
+from cgt_calculator import CGTCalculator
 
 TEST_STOCK_SPLITS = {
     "AMZN": {"data":

@@ -218,8 +218,6 @@ class CGTCalculator:
 
 
 if __name__ == "__main__":
-    # Run with: python3 -m src.main
-    # Debug with launch.json
     results_per_fy = CGTCalculator(
         Path(__file__).parent.parent / "trade_history.csv"
     ).execute()
