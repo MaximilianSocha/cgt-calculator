@@ -14,7 +14,7 @@ def test_cgt_calculator(path_to_csv):
     """
     Test that the output dictionary is as expected.
     Must respond "Y" in terminal to input prompt.
-    Run with: python3 -m pytest -s test/test_cgt_calculator.py
+    Run with: pytest -s src/test/test_cgt_calculator.py
     """
 
     results_per_fy = MockCGTCalculator(path_to_csv).execute()
