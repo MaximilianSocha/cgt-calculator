@@ -30,10 +30,6 @@ function toggleDropdown(element) {
   dropdown.classList.toggle("active");
 }
 
-// document.getElementById("fileInput").addEventListener("click", function () {
-//   document.getElementById("fileInput").click();
-// });
-
 document
   .getElementById("fileInput")
   .addEventListener("change", async function (e) {
@@ -68,7 +64,7 @@ document
                     `;
         document.getElementById("successModal").style.display = "block";
       } else {
-        alert("Error: " + data.error);
+        alert(data.error);
       }
     } catch (error) {
       alert("Error uploading file: " + error.message);

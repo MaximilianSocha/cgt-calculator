@@ -1,8 +1,3 @@
-"""
-Flask Backend for CGT Calculator
-Install required packages: pip install flask pandas xlsxwriter stripe python-dotenv
-"""
-
 from flask import Flask, request, jsonify, send_file, render_template
 from cgt_calculator import CGTCalculator
 from output_excel_writer import export_capital_gains_to_excel
@@ -18,7 +13,7 @@ app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
 app.config["OUTPUT_FOLDER"] = "outputs"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB max file size
-app.config["SECRET_KEY"] = "your-secret-key-here"  # Change this! this is needed for flask to work, unique to every flask application, put in .env file
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Stripe configuration
 stripe.api_key = "your-stripe-secret-key"  # Set this in environment variable
@@ -116,7 +111,7 @@ def upload_file():
                 "session_id": session_id,
                 "summary": {
                     "years_processed": len(data_dict),
-                    "financial_years": list(data_dict.keys()),
+                    "financial_years": list(int(year) for year in data_dict.keys()),
                 },
             }
         )
