@@ -9,10 +9,18 @@ async function initStripe() {
   const response = await fetch("/api/config");
   const config = await response.json();
   stripe = Stripe(config.stripePublishableKey);
-  elements = stripe.elements();
-  cardElement = elements.create("card");
+  const appearance = {
+    theme: "flat",
+  };
+  const options = {
+    layout: {
+      type: "tabs",
+      defaultCollapsed: false,
+    },
+  };
+  elements = stripe.elements({ clientSecret, appearance });
+  cardElement = elements.create("payment", options);
   cardElement.mount("#card-element");
-
   cardElement.on("change", function (event) {
     const displayError = document.getElementById("card-errors");
     if (event.error) {

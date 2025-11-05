@@ -16,8 +16,8 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB max file size
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Stripe configuration
-stripe.api_key = "your-stripe-secret-key"  # Set this in environment variable
-STRIPE_PUBLISHABLE_KEY = "your-stripe-publishable-key"
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
 # Ensure folders exist
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -123,7 +123,7 @@ def create_payment_intent():
     try:
         # Create payment intent with Stripe
         intent = stripe.PaymentIntent.create(
-            amount=999,  # $9.99 in cents - adjust as needed
+            amount=4999,  # $49.99 in cents
             currency="aud",
             metadata={"session_id": session_id},
         )
