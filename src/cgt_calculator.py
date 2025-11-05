@@ -118,7 +118,7 @@ class CGTCalculator:
 
         return trades
 
-    def execute(self):
+    def execute(self, allow_short_selling=False):
         used_buy_trades = {}  # key is id and value is quantity used
         results_per_fy = {}
         for fy in sorted(self.trades_df["fy"].unique()):
@@ -132,6 +132,7 @@ class CGTCalculator:
                 taxable_capital_gain=0,
             )
 
+            short_sell_symbols = []
             for symbol in sorted(self.trades_df["symbol"].unique()):
                 buy_trades_df = self.trades_df[
                     (self.trades_df["symbol"] == symbol)
@@ -160,19 +161,13 @@ class CGTCalculator:
                 total_sell_qty = solver_sells_df["quantity"].sum()
                 total_buy_qty = solver_buys_df["qty_avail"].sum()
                 if total_buy_qty < total_sell_qty:
-                    response = input(
-                        f"Short selling detected on symbol: {symbol}.\nDo you wish to proceed? (Y/N)"
+                    short_sell_symbols.append(symbol)
+                    results_per_fy[fy]["buy_and_sell_pairs"][symbol] = []
+                    short_sell_gain = self._calculate_short_sell_gain(
+                        solver_sells_df,
+                        total_sell_qty - total_buy_qty,
+                        results_per_fy[fy]["buy_and_sell_pairs"][symbol],
                     )
-                    if response == "Y":
-                        results_per_fy[fy]["buy_and_sell_pairs"][symbol] = []
-                        short_sell_gain = self._calculate_short_sell_gain(
-                            solver_sells_df,
-                            total_sell_qty - total_buy_qty,
-                            results_per_fy[fy]["buy_and_sell_pairs"][symbol],
-                        )
-                    else:
-                        print("\n==== Calculation aborted by user ====")
-                        return
 
                 # Solve
                 result = minimise_tax_for_symbol_year(
@@ -212,6 +207,11 @@ class CGTCalculator:
                 # Taxable gain includes raw gain, subtracted CGT discount, subtracted loss, and then short sell gain on top
                 results_per_fy[fy]["taxable_capital_gain"] += (
                     result["taxable"] + short_sell_gain
+                )
+
+            if not allow_short_selling and short_sell_symbols:
+                raise ValueError(
+                    f"Short selling detected on symbols:{', '.join(short_sell_symbols)}\nContinue calculation, or refer to instructions for more info."
                 )
 
         return results_per_fy

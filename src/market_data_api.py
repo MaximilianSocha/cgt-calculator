@@ -57,6 +57,7 @@ def handle_splits_and_ticker_changes(trades_df):
         trade_dates = sorted(symbol_df["trade_date"].to_list())
 
         # REMOVE LATER, JUST FOR TESTING
+        continue
         if symbol not in (
             "NVDA",
             "TQQQ",

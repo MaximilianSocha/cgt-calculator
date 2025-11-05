@@ -32,16 +32,21 @@ function toggleDropdown(element) {
 
 document
   .getElementById("fileInput")
-  .addEventListener("change", async function (e) {
+  .addEventListener("change", function (e) {
     const file = e.target.files[0];
     if (!file) return;
 
+    uploadFile(e, file);
+  });
+
+async function uploadFile(e, file, allow_short_selling="") {
     const uploadBtn = document.getElementById("fileInput");
     uploadBtn.disabled = true;
     uploadBtn.innerHTML = '<span class="spinner"></span> Processing...';
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("allow_short_selling", allow_short_selling);
 
     try {
       const response = await fetch("/api/upload", {
@@ -54,15 +59,20 @@ document
       if (response.ok) {
         sessionId = data.session_id;
         document.getElementById("successMessage").innerHTML = `
-                        <p>${data.message}</p>
-                        <p style="margin-top: 1rem;"><strong>Years Processed:</strong> ${
-                          data.summary.years_processed
-                        }</p>
-                        <p><strong>Financial Years:</strong> ${data.summary.financial_years.join(
-                          ", "
-                        )}</p>
-                    `;
+          <p>${data.message}</p>
+          <p style="margin-top: 1rem;"><strong>Years Processed:</strong> ${
+            data.summary.years_processed
+          }</p>
+          <p><strong>Financial Years:</strong> ${data.summary.financial_years.join(
+            ", "
+          )}</p>`;
         document.getElementById("successModal").style.display = "block";
+      } else if (data.short_sell_warning) {
+        if (confirm(data.short_sell_warning)) {
+          uploadFile(e, file, "True");
+        } else {
+          return;
+        }
       } else {
         alert(data.error);
       }
@@ -73,7 +83,7 @@ document
       uploadBtn.textContent = "Import your csv file and calculate!";
       e.target.value = "";
     }
-  });
+}
 
 function closeModal() {
   document.getElementById("successModal").style.display = "none";

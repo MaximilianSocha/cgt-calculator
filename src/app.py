@@ -31,32 +31,6 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() == "csv"
 
 
-def process_csv_to_dict(csv_path):
-    """
-    Process the CSV file and convert it to the required dictionary format.
-    Modify this function based on your actual CSV structure and logic.
-    """
-    results_per_fy = CGTCalculator(csv_path).execute()
-
-    # Example processing - replace with your actual logic
-    # result_dict = {
-    #     "2023/2024": {
-    #         "sell_and_buy_pairs": {
-    #             "AAPL": [
-    #                 (datetime(2023, 8, 15), datetime(2024, 2, 20), 100, 15.50),
-    #             ],
-    #         },
-    #         "total_capital_gain": 1550.00,
-    #         "loss": 0,
-    #         "short_sell_gain": 0,
-    #         "capital_gains_discount": 387.50,
-    #         "taxable_capital_gain": 1162.50,
-    #     }
-    # }
-
-    return results_per_fy
-
-
 @app.route("/")
 def index():
     """Serve the HTML frontend"""
@@ -70,12 +44,18 @@ def upload_file():
         return jsonify({"error": "No file provided"}), 400
 
     file = request.files["file"]
-
     if file.filename == "":
         return jsonify({"error": "No file selected"}), 400
 
     if not allowed_file(file.filename):
         return jsonify({"error": "Only CSV files are allowed"}), 400
+
+    allow_short_selling = (
+            True
+            if "allow_short_selling" in request.form
+            and bool(request.form["allow_short_selling"])
+            else False
+        )
 
     try:
         # Generate unique ID for this processing session
@@ -86,8 +66,11 @@ def upload_file():
         csv_path = os.path.join(app.config["UPLOAD_FOLDER"], f"{session_id}_{filename}")
         file.save(csv_path)
 
-        # Process CSV to dictionary
-        data_dict = process_csv_to_dict(csv_path)
+        # Calculate the optimal capital gains tax for each financial year
+        try:
+            data_dict = CGTCalculator(csv_path).execute(allow_short_selling)
+        except ValueError as e:
+            return jsonify({"short_sell_warning": str(e)}), 300
 
         # Generate Excel file
         excel_filename = f"cgt_report_{session_id}.xlsx"
