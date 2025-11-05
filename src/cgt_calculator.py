@@ -211,7 +211,7 @@ class CGTCalculator:
 
             if not allow_short_selling and short_sell_symbols:
                 raise ValueError(
-                    f"Short selling detected on symbols:{', '.join(short_sell_symbols)}\nContinue calculation, or refer to instructions for more info."
+                    f"Short selling detected on symbols: {', '.join(short_sell_symbols)}"
                 )
 
         return results_per_fy

@@ -117,6 +117,29 @@
         <input id="fileInput" style="display:none;" type="file" accept=".csv">
     </div>
 
+    <!-- Failure Modal -->
+    <div id="failureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Calculation Failed</div>
+            <div class="modal-body" id="failMessage"></div>
+            <div class="modal-buttons">
+                <button class="modal-button modal-button-primary" onclick="closeModal()">Ok</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Short Sell Selection Modal -->
+    <div id="shortSellModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Short Selling Detected</div>
+            <div class="modal-body" id="shortSellMessage"></div>
+            <div class="modal-buttons">
+                <button class="modal-button modal-button-secondary" onclick="closeModal()">Cancel</button>
+                <button class="modal-button modal-button-primary" id="allowShortSell">Continue</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="successModal" class="modal">
         <div class="modal-content">

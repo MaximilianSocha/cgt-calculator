@@ -63,21 +63,32 @@ async function uploadFile(e, file, allow_short_selling="") {
           <p style="margin-top: 1rem;"><strong>Years Processed:</strong> ${
             data.summary.years_processed
           }</p>
-          <p><strong>Financial Years:</strong> ${data.summary.financial_years.join(
-            ", "
-          )}</p>`;
+          <p><strong>Financial Years:</strong> ${data.summary.financial_years.join()}</p>`;
         document.getElementById("successModal").style.display = "block";
       } else if (data.short_sell_warning) {
-        if (confirm(data.short_sell_warning)) {
-          uploadFile(e, file, "True");
-        } else {
-          return;
-        }
+          document.getElementById("shortSellMessage").innerHTML = `
+            <p>${data.short_sell_warning}</p>
+            <p>Continue calculation, or refer to instructions for more info.<p>`;
+          document.getElementById("shortSellModal").style.display = "block";
+          document
+            .getElementById("allowShortSell")
+            .addEventListener("click", function() { closeModal(); uploadFile(e, file, "True"); });
+      } else if (data.symbol_error && data.lp_error) {
+          document.getElementById("failMessage").innerHTML = `
+            <p>${data.symbol_error}</p>
+            <p>${data.lp_error}<p>`;
+          document.getElementById("failureModal").style.display = "block";
       } else {
-        alert(data.error);
+        document.getElementById("failMessage").innerHTML = `
+          <p>The calculation failed with the follow error:<p>
+          <p>${data.error}</p>`;
+        document.getElementById("failureModal").style.display = "block";
       }
     } catch (error) {
-      alert("Error uploading file: " + error.message);
+        document.getElementById("failMessage").innerHTML = `
+          <p>Error uploading file:<p>
+          <p>${error.message}</p>`;
+        document.getElementById("failureModal").style.display = "block";
     } finally {
       uploadBtn.disabled = false;
       uploadBtn.textContent = "Import your csv file and calculate!";
@@ -87,6 +98,8 @@ async function uploadFile(e, file, allow_short_selling="") {
 
 function closeModal() {
   document.getElementById("successModal").style.display = "none";
+  document.getElementById("failureModal").style.display = "none";
+  document.getElementById("shortSellModal").style.display = "none";
   sessionId = null;
 }
 

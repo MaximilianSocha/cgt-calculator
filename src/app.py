@@ -71,6 +71,14 @@ def upload_file():
             data_dict = CGTCalculator(csv_path).execute(allow_short_selling)
         except ValueError as e:
             return jsonify({"short_sell_warning": str(e)}), 300
+        except RuntimeError as e:
+            error_lines = str(e).split('\n')
+            return jsonify(
+                {
+                    "symbol_error": error_lines[0],
+                    "lp_error": error_lines[1],
+                }
+            ), 300
 
         # Generate Excel file
         excel_filename = f"cgt_report_{session_id}.xlsx"
@@ -100,7 +108,7 @@ def upload_file():
         )
 
     except Exception as e:
-        return jsonify({"error": f"Error processing file: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/create-payment-intent", methods=["POST"])
