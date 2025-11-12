@@ -1,11 +1,13 @@
+let stripe = null;
 let sessionId = null;
 let clientSecret = null;
+let paymentElement = null;
 
 // Initialize Stripe
 async function initStripe() {
   const response = await fetch("/api/config");
   const config = await response.json();
-  const stripe = Stripe(config.stripePublishableKey);
+  stripe = Stripe(config.stripePublishableKey);
   const options = {
     clientSecret: clientSecret,
     appearance: {
@@ -13,9 +15,9 @@ async function initStripe() {
     },
   };
   const elements = stripe.elements(options);
-  const cardElement = elements.create("payment");
-  cardElement.mount("#payment-element");
-  cardElement.on("change", function (event) {
+  const paymentElement = elements.create("payment");
+  paymentElement.mount("#payment-element");
+  paymentElement.on("change", function (event) {
     const displayError = document.getElementById("card-errors");
     if (event.error) {
       displayError.textContent = event.error.message;
@@ -149,7 +151,7 @@ document
         clientSecret,
         {
           payment_method: {
-            card: cardElement,
+            card: paymentElement,
           },
         }
       );

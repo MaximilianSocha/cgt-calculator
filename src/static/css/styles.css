@@ -64,9 +64,68 @@ h2 {
     font-size: 1.05rem;
 }
 
+.title-dropdown {
+    margin: 1rem 0;
+    border: 1px solid #1e3a8a;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.title-dropdown-header {
+    background-color: #1e3a8a;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.title-dropdown-header:hover {
+    background-color: #1e40af;
+}
+
+.title-dropdown-header h3 {
+    font-size: 1.1rem;
+    color: #ddd;
+    font-weight: 800;
+}
+
+.title-dropdown-arrow {
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    color: #ddd;
+}
+
+.title-dropdown.active .title-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.title-dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: white;
+}
+
+.title-dropdown.active .title-dropdown-content {
+    max-height: 500px;
+    transition: max-height 0.5s ease-in;
+}
+
+.title-dropdown-content ul {
+    list-style-position: inside;
+    color: #555;
+}
+
+.title-dropdown-content li {
+    margin: 0.8rem 0;
+    padding-left: 1rem;
+    line-height: 1.6;
+}
+
 .dropdown {
     margin: 1rem 0;
-    border: 1px solid #ddd;
     border-radius: 5px;
     overflow: hidden;
 }
@@ -113,10 +172,6 @@ h2 {
     transition: max-height 0.5s ease-in;
 }
 
-.dropdown-content-inner {
-    padding: 1.5rem;
-}
-
 .dropdown-content ul {
     list-style-position: inside;
     color: #555;
@@ -135,6 +190,10 @@ h2 {
     margin: 1rem auto;
     border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown-content-inner {
+    padding: 1.5rem;
 }
 
 .import-button {
