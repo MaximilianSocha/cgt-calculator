@@ -24,7 +24,7 @@ header {
 }
 
 header h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 600;
 }
 
@@ -44,7 +44,7 @@ section {
 
 h2 {
     color: #1e3a8a;
-    font-size: 1.8rem;
+    font-size: 2.25rem;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 3px solid #1e3a8a;
@@ -55,20 +55,21 @@ h2 {
     max-width: 800px;
     margin: 0 auto;
     color: #555;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
 }
 
 .paragraph-text {
     color: #555;
     margin-bottom: 1.5rem;
-    font-size: 1.05rem;
+    font-size: 1.2rem;
 }
 
 .title-dropdown {
-    margin: 1rem 0;
+    margin: 1.75rem 0;
     border: 1px solid #1e3a8a;
     border-radius: 2px;
     overflow: hidden;
+    border-radius: 4px;
 }
 
 .title-dropdown-header {
@@ -86,14 +87,14 @@ h2 {
 }
 
 .title-dropdown-header h3 {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     color: #ddd;
     font-weight: 800;
 }
 
 .title-dropdown-arrow {
-    font-size: 1.2rem;
-    transition: transform 0.3s;
+    font-size: 1.25rem;
+    transition: transform 0.5s;
     color: #ddd;
 }
 
@@ -104,13 +105,13 @@ h2 {
 .title-dropdown-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out;
+    transition: max-height 0.5s ease-out;
     background-color: white;
 }
 
 .title-dropdown.active .title-dropdown-content {
-    max-height: 500px;
-    transition: max-height 0.5s ease-in;
+    max-height: 1250px;
+    transition: max-height 0.8s ease-in;
 }
 
 .title-dropdown-content ul {
@@ -122,6 +123,15 @@ h2 {
     margin: 0.8rem 0;
     padding-left: 1rem;
     line-height: 1.6;
+}
+
+.title-dropdown-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .dropdown {
@@ -198,15 +208,16 @@ h2 {
 
 .import-button {
     display: block;
+    text-align: center;
     width: 100%;
-    max-width: 400px;
+    max-width: 425px;
     margin: 2rem auto;
     padding: 2rem 2rem;
     background-color: #1e3a8a;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.1s;
