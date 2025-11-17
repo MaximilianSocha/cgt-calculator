@@ -13,11 +13,10 @@ def path_to_csv():
 def test_cgt_calculator(path_to_csv):
     """
     Test that the output dictionary is as expected.
-    Must respond "Y" in terminal to input prompt.
-    Run with: pytest -s src/test/test_cgt_calculator.py
+    Run with: pytest src/test/test_cgt_calculator.py
     """
 
-    results_per_fy = MockCGTCalculator(path_to_csv).execute()
+    results_per_fy = MockCGTCalculator(path_to_csv).execute(allow_short_selling=True)
     assert results_per_fy == TEST_RESULT
 
 TEST_RESULT = {

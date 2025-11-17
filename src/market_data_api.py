@@ -1,10 +1,14 @@
+from pathlib import Path
 from dotenv import load_dotenv
 from datetime import datetime
+import pandas as pd
 import requests
 import os
 
 SPLITS_URL = "https://www.alphavantage.co/query?function=SPLITS"
 OVERVIEW_URL = "https://www.alphavantage.co/query?function=OVERVIEW"
+
+TICKER_CHANGES_DF = pd.read_csv(Path(__file__).parent / "ticker_change_data.csv")
 
 def get_alpha_vantage_api_key():
     load_dotenv()
@@ -17,7 +21,22 @@ def get_company_overview_api_url(symbol):
     return f"{OVERVIEW_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()}"
 
 
-def apply_stock_splits(trades_df, symbol, trade_dates):
+def apply_ticker_changes(trades_df, symbol):
+    old_ticker_row = TICKER_CHANGES_DF[TICKER_CHANGES_DF["old_ticker"] == symbol]
+    new_ticker = ""
+    while not old_ticker_row.empty:
+        new_ticker = TICKER_CHANGES_DF.loc[old_ticker_row.index[0], "new_ticker"]
+        old_ticker_row = TICKER_CHANGES_DF[
+            TICKER_CHANGES_DF["old_ticker"] == new_ticker
+        ]
+    
+    if new_ticker:
+        old_symbol_df = trades_df[trades_df["symbol"] == symbol]
+        for index in old_symbol_df.index:
+            trades_df.loc[index, "symbol"] = new_ticker
+
+
+def apply_stock_splits(trades_df, symbol, sorted_trade_dates):
 
     response = requests.get(get_splits_api_url(symbol))
     response_object = response.json()
@@ -26,8 +45,8 @@ def apply_stock_splits(trades_df, symbol, trade_dates):
         splits = response_object["data"]
         earliest_split = len(splits) - 1
         trade_date_index = 0
-        while trade_date_index < len(trade_dates):
-            trade_date = trade_dates[trade_date_index]
+        while trade_date_index < len(sorted_trade_dates):
+            trade_date = sorted_trade_dates[trade_date_index]
 
             if earliest_split < 0:
                 break
@@ -45,7 +64,7 @@ def apply_stock_splits(trades_df, symbol, trade_dates):
                     & (trades_df["symbol"] == symbol)
                 ].index[0]
                 # multiply the quantity to reflect all splits which occurred after trade date
-                trades_df.loc[row_index, "quantity"] *= int(split_factor)
+                trades_df.loc[row_index, "quantity"] *= split_factor
                 trade_date_index += 1
 
 
@@ -56,19 +75,9 @@ def handle_splits_and_ticker_changes(trades_df):
         symbol_df = trades_df[trades_df["symbol"] == symbol]
         trade_dates = sorted(symbol_df["trade_date"].to_list())
 
-        # REMOVE LATER, JUST FOR TESTING
-        continue
-        if symbol not in (
-            "NVDA",
-            "TQQQ",
-            "TSLA",
-            "GOOG",
-            "AMZN",
-            ):
-                continue
-
         # Download ticker change data from here https://stockanalysis.com/actions/changes/2022/
         # and if needed from https://www.asx.com.au/markets/market-resources/asx-codes-and-descriptors/asx-code-changes
         # It will only have to be updated once a year around June/July, so no need for API
         #apply_ticker_changes(trades_df, symbols, symbol, trade_dates[-1])
+        apply_ticker_changes(trades_df, symbol)
         apply_stock_splits(trades_df, symbol, trade_dates)
