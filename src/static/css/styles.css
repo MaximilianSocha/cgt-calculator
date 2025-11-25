@@ -105,7 +105,7 @@ h2 {
 .title-dropdown-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease-out;
+    transition: max-height 0.4s ease-out;
     background-color: white;
 }
 
@@ -333,14 +333,23 @@ h2 {
     margin-bottom: 1rem;
 }
 
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
 .spinner {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     border: 3px solid rgba(255,255,255,.3);
     border-radius: 50%;
     border-top-color: white;
     animation: spin 1s ease-in-out infinite;
+    margin: 0 8px;
 }
 
 @keyframes spin {

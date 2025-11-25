@@ -45,9 +45,9 @@ async function uploadFile(e, file, allow_short_selling="") {
   const uploadBtn = document.getElementById("fileInput");
   const uploadBtnLabel = document.getElementsByClassName("import-button")[0];
   uploadBtn.disabled = true;
-  uploadBtnLabel.innerHTML = '<span class="spinner"></span>   Calculating...';
-  uploadBtnLabel.style = "text-align: center;";
-
+  uploadBtnLabel.innerHTML = `<div class="spinner-container">
+                                <div class="spinner"></div>Calculating...
+                              </div>`;
   const formData = new FormData();
   formData.append("file", file);
   formData.append("allow_short_selling", allow_short_selling);

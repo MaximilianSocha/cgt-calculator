@@ -8,13 +8,16 @@ from output_excel_writer import export_capital_gains_to_excel
 class CGTCalculator:
     def __init__(self, trade_history_csv_path):
         # Initialise the trades data frame
+        # if excel file then use read_excel
+        # Check if first page is called summary and nabtrade in sheet
+        # Else do check for commsec
+        # Otherwise parse in the same way as below
         self.trades_df = pd.read_csv(trade_history_csv_path)
         self._initialise_trades_df()
         handle_splits_and_ticker_changes(self.trades_df)
 
     def _initialise_trades_df(self):
         # Normalise columns
-        # TODO: parsing the input data needs to be made more robust!
         self.trades_df.columns = [c.strip().lower() for c in self.trades_df.columns]
         required_cols = {
             "symbol",
@@ -29,22 +32,32 @@ class CGTCalculator:
 
         # parse and transform data
         self.trades_df["side"] = self.trades_df["side"].astype(str).str.upper()
+
         # remove appended exchange name (e.g .NYSE)
         self.trades_df["symbol"] = [
             str(s).split(".")[0].upper() for s in self.trades_df["symbol"]
         ]
+
         self.trades_df["trade_date"] = (
-            pd.to_datetime(  # will need to handle parsing different date formats
+            pd.to_datetime(
                 self.trades_df["trade_date"], dayfirst=True
             )
         )
-        self.trades_df["quantity"] = self.trades_df["quantity"].astype(float)
-        self.trades_df["transaction_amount"] = self.trades_df[
-            "transaction_amount"
-        ].astype(float)
+    
+        self.trades_df["quantity"] = self.trades_df["quantity"].astype(float).abs()
+
+        self.trades_df["transaction_amount"] = (
+            self.trades_df["transaction_amount"]
+            .str.replace("$", "", regex=False)
+        )
+        self.trades_df["transaction_amount"] = (
+            self.trades_df["transaction_amount"].astype(float).abs()
+        )
+    
         self.trades_df["fy"] = (
             self.trades_df["trade_date"].apply(self._au_fin_year).astype(int)
         )
+    
         self.trades_df["id"] = [i for i in range(len(self.trades_df["trade_date"]))]
 
     def _au_fin_year(self, transaction_date):
