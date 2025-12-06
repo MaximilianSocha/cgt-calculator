@@ -6,15 +6,63 @@ from output_excel_writer import export_capital_gains_to_excel
 
 
 class CGTCalculator:
-    def __init__(self, trade_history_csv_path):
-        # Initialise the trades data frame
-        # if excel file then use read_excel
-        # Check if first page is called summary and nabtrade in sheet
-        # Else do check for commsec
-        # Otherwise parse in the same way as below
-        self.trades_df = pd.read_csv(trade_history_csv_path)
+    def __init__(self, trade_history_csv_path: Path):
+        self.trades_df = self._parse_trade_history_file(trade_history_csv_path)
         self._initialise_trades_df()
         handle_splits_and_ticker_changes(self.trades_df)
+
+    def _parse_trade_history_file(self, trade_history_path) -> pd.DataFrame:
+        if trade_history_path.suffix == ".csv":
+            return pd.read_csv(trade_history_path)
+        elif trade_history_path.suffix in (".xlsx", ".xls"):
+            trades_df = pd.read_excel(trade_history_path, sheet_name=0, skiprows=1)
+        else:
+            raise ValueError(
+                f"Invalid file type for trade history."
+                f"Only .csv, .xlsx, and .xls accpeted but" 
+                f"{trade_history_path.suffix} given"
+            )
+    
+        for col in trades_df.columns:
+            col_upper = trades_df[col].astype(str).str.upper()
+            for value in col_upper.values:
+                if "NABTRADE" in value:
+                    return self._parse_nabtrade_history_file(trade_history_path)
+            
+        return pd.DataFrame()
+
+    def _parse_nabtrade_history_file(self, trade_history_path) -> pd.DataFrame:
+        trades = pd.read_excel(trade_history_path, sheet_name=[3,4], skiprows=1)
+        trades_df = pd.DataFrame()
+        for df in trades.values():
+            # Apply ticker chanes
+            df["Movement Type"] = df["Movement Type"].astype(str)
+            df["Code"] = df["Code"].astype(str)
+            ticker_change_idx = df.index[df["Movement Type"] == "CHANGE_SECURITY_CODE"].tolist()
+            i = 1
+            while i <= len(ticker_change_idx):
+                row_index = ticker_change_idx[i]
+                df["Code"] = df["Code"].replace(
+                    {df.loc[row_index - 1, "Code"]: df.loc[row_index, "Code"]}
+                )
+                i += 2
+
+            # Filter out values and rename
+            df = df[(df["Movement Type"] == "BUY") | 
+                    (df["Movement Type"] == "SELL")]
+            df = df.rename(
+                columns={
+                    "Movement Type": "side",
+                    "Code": "symbol",
+                    "Date": "trade_date",
+                    "Quantity": "quantity",
+                    "Settlement Amount (AUD)": "transaction_amount",
+                }
+            )
+            df = df[["side", "symbol", "trade_date", "quantity", "transaction_amount"]]
+            trades_df = pd.concat([trades_df, df], ignore_index=True)
+
+        return trades_df
 
     def _initialise_trades_df(self):
         # Normalise columns
@@ -48,7 +96,7 @@ class CGTCalculator:
 
         self.trades_df["transaction_amount"] = (
             self.trades_df["transaction_amount"]
-            .str.replace("$", "", regex=False)
+            .astype(str).str.replace("$", "", regex=False)
         )
         self.trades_df["transaction_amount"] = (
             self.trades_df["transaction_amount"].astype(float).abs()
@@ -232,6 +280,6 @@ class CGTCalculator:
 
 if __name__ == "__main__":
     results_per_fy = CGTCalculator(
-        Path(__file__).parent.parent / "trade_history.csv"
+        Path(__file__).parent.parent / "trade_history_bubbles.xlsx"
     ).execute()
     export_capital_gains_to_excel(results_per_fy)

@@ -5,6 +5,8 @@ It is not intended to handle capital gains from real estate or physical asset, b
 The final product is intended to be a webpage where a user inputs a `.csv` file with all their trade history and they recieve a `.xlsx` file with a summary of their taxable capital gain.
 
 # Input
+## NabTrade
+Download trade history from the nabtrade site and save it as a .xlsx file
 
 # Handling stock splits, ticker changes, short selling, and delisted stocks/ETFs
 
