@@ -1,6 +1,7 @@
 from datetime import datetime
 import pandas as pd
 from cgt_calculator import CGTCalculator
+from market_data_api import apply_ticker_changes
 
 TEST_STOCK_SPLITS = {
     "AMZN": {"data":
@@ -83,7 +84,7 @@ def mock_handle_splits_and_ticker_changes(trades_df):
         symbol_df = trades_df[trades_df["symbol"] == symbol]
         trade_dates = sorted(symbol_df["trade_date"].to_list())
 
-        # apply_ticker_changes(trades_df, symbols, symbol, trade_dates[-1])
+        apply_ticker_changes(trades_df, symbol)
         apply_stock_splits(trades_df, symbol, trade_dates)
 
 class MockCGTCalculator(CGTCalculator):

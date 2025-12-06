@@ -5,3 +5,4 @@
 .venv
 .DS_Store
 !ticker_change_data.csv
+!trade_history_test.csv
