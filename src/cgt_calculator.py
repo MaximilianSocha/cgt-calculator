@@ -6,39 +6,63 @@ from output_excel_writer import export_capital_gains_to_excel
 
 
 class CGTCalculator:
-    def __init__(self, trade_history_csv_path: Path):
+    def __init__(self, trade_history_csv_path: str):
         self.trades_df = self._parse_trade_history_file(trade_history_csv_path)
         self._initialise_trades_df()
         handle_splits_and_ticker_changes(self.trades_df)
 
     def _parse_trade_history_file(self, trade_history_path) -> pd.DataFrame:
-        if trade_history_path.suffix == ".csv":
-            return pd.read_csv(trade_history_path)
-        elif trade_history_path.suffix in (".xlsx", ".xls"):
+        if trade_history_path.endswith(".csv"):
+            trades_df = pd.read_csv(trade_history_path)
+        elif trade_history_path.endswith((".xlsx", ".xls")):
             trades_df = pd.read_excel(trade_history_path, sheet_name=0, skiprows=1)
         else:
             raise ValueError(
                 f"Invalid file type for trade history."
-                f"Only .csv, .xlsx, and .xls accpeted but" 
-                f"{trade_history_path.suffix} given"
+                f"Only .csv, .xlsx, and .xls accpeted but"
+                f"{trade_history_path.split('.')[1]} given"
             )
-    
-        for col in trades_df.columns:
-            col_upper = trades_df[col].astype(str).str.upper()
+
+        # Verify if these transaction are from commsec
+        if (
+            "Reference" in trades_df.columns
+            and trades_df["Reference"].astype(str).iloc[0][0] == "C"
+        ):
+            new_columns = trades_df["Details"].str.split(" ", expand=True, n=3)
+            new_columns.columns = ["side", "quantity", "symbol", "at_price"]
+            new_columns["side"] = new_columns["side"].replace({"B": "BUY", "S": "SELL"})
+            trades_df = trades_df.join(new_columns)
+
+            trades_df = trades_df.rename(
+                columns={
+                    "Date": "trade_date",
+                    "Balance($)": "transaction_amount",
+                }
+            )
+            trades_df = trades_df[
+                ["side", "symbol", "trade_date", "quantity", "transaction_amount"]
+            ]
+
+        # Verify if these transaction are from nabtrade
+        elif "Account Name" in trades_df.columns:
+            col_upper = trades_df["Account Name"].astype(str).str.upper()
             for value in col_upper.values:
                 if "NABTRADE" in value:
-                    return self._parse_nabtrade_history_file(trade_history_path)
-            
-        return pd.DataFrame()
+                    trades_df = self._parse_nabtrade_history_file(trade_history_path)
+                    break
+
+        return trades_df
 
     def _parse_nabtrade_history_file(self, trade_history_path) -> pd.DataFrame:
-        trades = pd.read_excel(trade_history_path, sheet_name=[3,4], skiprows=1)
+        trades = pd.read_excel(trade_history_path, sheet_name=[3, 4], skiprows=1)
         trades_df = pd.DataFrame()
         for df in trades.values():
             # Apply ticker chanes
             df["Movement Type"] = df["Movement Type"].astype(str)
             df["Code"] = df["Code"].astype(str)
-            ticker_change_idx = df.index[df["Movement Type"] == "CHANGE_SECURITY_CODE"].tolist()
+            ticker_change_idx = df.index[
+                df["Movement Type"] == "CHANGE_SECURITY_CODE"
+            ].tolist()
             i = 1
             while i <= len(ticker_change_idx):
                 row_index = ticker_change_idx[i]
@@ -48,8 +72,7 @@ class CGTCalculator:
                 i += 2
 
             # Filter out values and rename
-            df = df[(df["Movement Type"] == "BUY") | 
-                    (df["Movement Type"] == "SELL")]
+            df = df[(df["Movement Type"] == "BUY") | (df["Movement Type"] == "SELL")]
             df = df.rename(
                 columns={
                     "Movement Type": "side",
@@ -86,26 +109,25 @@ class CGTCalculator:
             str(s).split(".")[0].upper() for s in self.trades_df["symbol"]
         ]
 
-        self.trades_df["trade_date"] = (
-            pd.to_datetime(
-                self.trades_df["trade_date"], dayfirst=True
-            )
+        self.trades_df["trade_date"] = pd.to_datetime(
+            self.trades_df["trade_date"], dayfirst=True
         )
-    
+
         self.trades_df["quantity"] = self.trades_df["quantity"].astype(float).abs()
 
         self.trades_df["transaction_amount"] = (
             self.trades_df["transaction_amount"]
-            .astype(str).str.replace("$", "", regex=False)
+            .astype(str)
+            .str.replace("$", "", regex=False)
         )
         self.trades_df["transaction_amount"] = (
             self.trades_df["transaction_amount"].astype(float).abs()
         )
-    
+
         self.trades_df["fy"] = (
             self.trades_df["trade_date"].apply(self._au_fin_year).astype(int)
         )
-    
+
         self.trades_df["id"] = [i for i in range(len(self.trades_df["trade_date"]))]
 
     def _au_fin_year(self, transaction_date):
@@ -280,6 +302,6 @@ class CGTCalculator:
 
 if __name__ == "__main__":
     results_per_fy = CGTCalculator(
-        Path(__file__).parent.parent / "trade_history_bubbles.xlsx"
+        Path(__file__).parent.parent / "trade_history_commsec.csv"
     ).execute()
     export_capital_gains_to_excel(results_per_fy)
