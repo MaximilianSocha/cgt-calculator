@@ -1,7 +1,7 @@
 let stripe = null;
 let sessionId = null;
 let clientSecret = null;
-let paymentElement = null;
+let elements = null;
 
 // Initialize Stripe
 async function initStripe() {
@@ -14,7 +14,7 @@ async function initStripe() {
       theme: "flat",
     },
   };
-  const elements = stripe.elements(options);
+  elements = stripe.elements(options);
   const paymentElement = elements.create("payment");
   paymentElement.mount("#payment-element");
   paymentElement.on("change", function (event) {
@@ -104,6 +104,7 @@ function closeModal() {
   document.getElementById("successModal").style.display = "none";
   document.getElementById("failureModal").style.display = "none";
   document.getElementById("shortSellModal").style.display = "none";
+  document.getElementById("finishModal").style.display = "none";
   sessionId = null;
 }
 
@@ -144,23 +145,26 @@ document
 
     const payBtn = document.getElementById("payBtn");
     payBtn.disabled = true;
-    payBtn.innerHTML = '<span class="spinner"></span> Processing...';
+    payBtn.innerHTML = `<div class="spinner-container">
+                          <div class="spinner"></div>Processing...
+                        </div>`;
 
     try {
-      const { error, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: paymentElement,
-          },
-        }
-      );
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin,
+        },
+        redirect: "if_required",
+      });
 
       if (error) {
         document.getElementById("card-errors").textContent = error.message;
         payBtn.disabled = false;
         payBtn.textContent = "Pay $49.99";
-      } else if (paymentIntent.status === "succeeded") {
+      } else {
+        const paymentIntentId = clientSecret.split("_secret_")[0];
+
         // Verify payment and get download link
         const verifyResponse = await fetch("/api/verify-payment", {
           method: "POST",
@@ -168,7 +172,7 @@ document
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            payment_intent_id: paymentIntent.id,
+            payment_intent_id: paymentIntentId,
             session_id: sessionId,
           }),
         });
@@ -176,14 +180,12 @@ document
         const verifyData = await verifyResponse.json();
 
         if (verifyResponse.ok) {
-          // Close modal and trigger download
+          // Close modal show success and trigger download
           document.getElementById("paymentModal").style.display = "none";
+          document.getElementById("finishModal").style.display = "block";
 
           // Trigger download
           window.location.href = verifyData.download_url;
-
-          // Show success message
-          alert("Payment successful! Your download will begin shortly.");
 
           // Reset
           sessionId = null;

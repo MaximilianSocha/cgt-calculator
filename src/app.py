@@ -171,7 +171,7 @@ def download_file(session_id):
         return jsonify({"error": "File not found or session expired"}), 404
 
     file_info = processed_files[session_id]
-    excel_path = file_info["excel_path"]
+    excel_path = os.path.join(os.getcwd(), file_info["excel_path"])
 
     if not os.path.exists(excel_path):
         return jsonify({"error": "File not found"}), 404
