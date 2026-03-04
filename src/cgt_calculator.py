@@ -22,16 +22,22 @@ class CGTCalculator:
                 f"Only .csv, .xlsx, and .xls accpeted but"
                 f"{trade_history_path.split('.')[1]} given"
             )
-        trades_df = trades_df.dropna(axis=0)
 
         # Verify if these transaction are from commsec
-        if (
-            "Reference" in trades_df.columns
-            and trades_df["Reference"].astype(str).iloc[0][0] == "C"
-        ):
+        commsec_cols = {
+            "Date",
+            "Reference",
+            "Details",
+            "Debit($)",
+            "Credit($)",
+            "Balance($)",
+        }
+        if not commsec_cols - set(trades_df.columns):
             new_columns = trades_df["Details"].str.split(" ", expand=True, n=3)
             new_columns.columns = ["side", "quantity", "symbol", "at_price"]
             new_columns["side"] = new_columns["side"].replace({"B": "BUY", "S": "SELL"})
+            # Filter out non buys and sells
+            new_columns = new_columns[new_columns.isin(["BUY", "SELL"])]
             trades_df = trades_df.join(new_columns)
 
             trades_df = trades_df.rename(
@@ -52,6 +58,7 @@ class CGTCalculator:
                     trades_df = self._parse_nabtrade_history_file(trade_history_path)
                     break
 
+        trades_df = trades_df.dropna(axis=0)
         return trades_df
 
     def _parse_nabtrade_history_file(self, trade_history_path) -> pd.DataFrame:

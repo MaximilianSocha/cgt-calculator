@@ -16,7 +16,7 @@
         <section>
             <h2>Overview</h2>
             <p class="center-text">
-                This Capital Gains Tax (CGT) Calculator helps you accurately calculate your tax obligations from investment activities. Simply upload your transaction data and receive a comprehensive breakdown of your capital gains, losses, and tax liabilities for each financial year.
+                This Capital Gains Tax (CGT) Calculator helps you accurately calculate your tax obligations from investing in stocks or crypto. Simply upload your transaction data and receive a comprehensive breakdown of your capital gains, losses, and tax liabilities for each financial year.
             </p>
         </section>
 
@@ -34,10 +34,10 @@
                 <div class="title-dropdown-content">
                     <div class="dropdown-content-inner">
                         <ul>
-                            <li>First instruction point for this section</li>
-                            <li>Second instruction point with more details</li>
-                            <li>Third instruction point explaining the process</li>
-                            <li>Fourth instruction point with additional information</li>
+                            <li>Make sure that you have a way of downloading your history of executed trades (further explained in the next section)</li>
+                            <li>Simply import either a CSV or Excel file of your trade history and then the tool will calculate your capital gains tax optimally</li>
+                            <li>You will be taken to a payment portal for a $40 payment to then download an Excel file, this will contain all the information about the minimal capital gains tax you must pay, possibly saving you hundreds!</li>
+                            <li>An example result and how to intepret it is shown in the last section below</li>
                         </ul>
                     </div>
                 </div>
@@ -45,17 +45,12 @@
 
             <div class="title-dropdown">
                 <div class="title-dropdown-header" onclick="toggleDropdown(this)">
-                    <h3>Input Trade History CSV File</h3>
+                    <h3>Input Trade History File</h3>
                     <span class="title-dropdown-arrow">▼</span>
                 </div>
                 <div class="title-dropdown-content">
                     <div class="dropdown-content-inner">
-                        <ul>
-                            <li>First instruction point for this section</li>
-                            <li>Second instruction point with more details</li>
-                            <li>Third instruction point explaining the process</li>
-                            <li>Fourth instruction point with additional information</li>
-                        </ul>
+                        <p>If you trade with NabTrade or CommSec then the process is highly automated, but as long as you can download all your trade history then any service will work, just follow the steps below</p>
                         <div class="dropdown">
                             <div class="dropdown-header" onclick="toggleDropdown(this)">
                                 <h3>Getting Trade History from NabTrade</h3>
@@ -64,7 +59,13 @@
                             <div class="dropdown-content">
                                 <div class="dropdown-content-inner">
                                     <ul>
-                                        <li>Inner dropdown content</li>
+                                        <li>Access your account on the NabTrade website</li>
+                                        <li>On the home page, select the "Statements and Reports" button on the right hand side</li>
+                                        <li>Select the "Transaction report" button, this will take you to a page to select a date range</li>
+                                        <li>Ensure that the date range you input includes <b>all</b> trades you have ever done on NabTrade</li>
+                                        <li>Select the "Next" button and then the "Export Excel" button to download your report</li>
+                                        <li><b>Important:</b> This is the Excel file you will upload but make sure to save it as a <b>.xlsx</b> file!</li>
+                                        <li>Now go to the bottom of this page and import that Excel file to calculate your capital gains tax!</li>
                                     </ul>
                                 </div>
                             </div>
@@ -77,7 +78,12 @@
                             <div class="dropdown-content">
                                 <div class="dropdown-content-inner">
                                     <ul>
-                                        <li>Inner dropdown content</li>
+                                        <li>Access your account on the CommSec website</li>
+                                        <li>Navigate to the "Accounts" page and then click on the "Transactions" tab</li>
+                                        <li>Now select a date range, ensure that the date range you input includes <b>all</b> trades you have ever done for that account</li>
+                                        <li>Now press the download button and make sure to download as a CSV, below is an example of what it should look like</li>
+                                        <li>If you want to combine trades from multiple accounts then follow the above steps for the other accounts and combine the trades into a single csv</li>
+                                        <li>Now go to the bottom of this page and import that CSV file to calculate your capital gains tax!</li>
                                     </ul>
                                 </div>
                             </div>
@@ -90,7 +96,11 @@
                             <div class="dropdown-content">
                                 <div class="dropdown-content-inner">
                                     <ul>
-                                        <li>Inner dropdown content</li>
+                                        <li>Download your trade history from whatever service you use, ideally in a CSV or Excel format</li>
+                                        <li>Create an Excel file where you will save all of your executed trades</li>
+                                        <li>Make sure that the column names and value format is <b>exactly</b> the same as the example below</li>
+                                        <li>Remember that the value for transaction_amount should <b>include</b> any trading fees!</li>
+                                        <li>Save the file as a .xlsx file and then import it using the button below to calculate your capital gains tax!</li>
                                     </ul>
                                 </div>
                             </div>
@@ -107,10 +117,9 @@
                 <div class="title-dropdown-content">
                     <div class="dropdown-content-inner">
                         <ul>
-                            <li>First instruction point for this section</li>
-                            <li>Second instruction point with more details</li>
-                            <li>Third instruction point explaining the process</li>
-                            <li>Fourth instruction point with additional information</li>
+                            <li>You may get a dialog that short selling is detected, this can be no problem as you may have been awarded stock without explicitly buying it, however there is a chance that the calculator missed a stock split, or ticker change, or the stock was delisted, so please review the stock in question to ensure that short selling is applicable</li>
+                            <li>Avoid including any empty rows or null values if you are manually putting together the input or adding data from different accounts into one CSV or Excel sheet</li>
+                            <li>Make sure that the columns of the input CSV or Excel sheet are <b>exactly</b> as described in the above section for the relevant input type (NabTrade, CommSec, or other)</li>
                         </ul>
                     </div>
                 </div>
@@ -124,10 +133,10 @@
                 <div class="title-dropdown-content">
                     <div class="dropdown-content-inner">
                         <ul>
-                            <li>First instruction point for this section</li>
-                            <li>Second instruction point with more details</li>
-                            <li>Third instruction point explaining the process</li>
-                            <li>Fourth instruction point with additional information</li>
+                            <li>Below is an image of an example Excel file that you will get after providing the correct input and payment</li>
+                            <li>The file will have mutiple sheets, one for each financial year that you have executed trades</li>
+                            <li>At the bottom of each sheet there is a breakdown of the your total capital gain, loss, and capital gains discount for the year. These are the exact fields you need to fill out in your tax form for capital gains from non-physical assets such as stocks or crypto</li>
+                            <li>If you find that in previous years you have paid too much capital gains tax, you can add the overpaid amount to the "Unapplied Net Capital Losses Caried Forward" section in your tax form, and if your loss outweighs your gain you would also put it in that section</li>
                         </ul>
                     </div>
                 </div>
@@ -155,7 +164,7 @@
                 </div>
             </div>
         </section>
-        <label for="fileInput" class="import-button">Import your csv file and calculate!</label>
+        <label for="fileInput" class="import-button">Import your trade history and calculate!</label>
         <input id="fileInput" style="display:none;" type="file" accept=".csv">
     </div>
 
