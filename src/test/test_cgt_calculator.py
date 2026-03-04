@@ -16,7 +16,7 @@ def test_cgt_calculator(path_to_csv):
     Run with: pytest src/test/test_cgt_calculator.py
     """
 
-    results_per_fy = MockCGTCalculator(path_to_csv).execute(allow_short_selling=True)
+    results_per_fy = MockCGTCalculator(str(path_to_csv)).execute(allow_short_selling=True)
     assert results_per_fy == TEST_RESULT
 
 TEST_RESULT = {

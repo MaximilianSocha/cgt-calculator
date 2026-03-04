@@ -22,6 +22,7 @@ class CGTCalculator:
                 f"Only .csv, .xlsx, and .xls accpeted but"
                 f"{trade_history_path.split('.')[1]} given"
             )
+        trades_df = trades_df.dropna(axis=0)
 
         # Verify if these transaction are from commsec
         if (
@@ -302,6 +303,6 @@ class CGTCalculator:
 
 if __name__ == "__main__":
     results_per_fy = CGTCalculator(
-        Path(__file__).parent.parent / "trade_history_commsec.csv"
+        str(Path(__file__).parent.parent / "trade_history_commsec.csv")
     ).execute()
     export_capital_gains_to_excel(results_per_fy)

@@ -5,7 +5,6 @@ import pandas as pd
 
 def is_long_term(buy_date, sell_date):
     # ATO requires >12 months: exclude both acquisition day and CGT event day.
-    # Practical test: strictly more than 365 days between dates (approx; leap years aside).
     return (sell_date - buy_date).days > 365
 
 
