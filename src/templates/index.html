@@ -16,14 +16,14 @@
         <section>
             <h2>Overview</h2>
             <p class="center-text">
-                This Capital Gains Tax (CGT) Calculator helps you accurately calculate your tax obligations from investing in stocks or crypto. Simply upload your transaction data and receive a comprehensive breakdown of your capital gains, losses, and tax liabilities for each financial year.
+                This Capital Gains Tax (CGT) Calculator helps you accurately calculate your minimum tax obligations from investing in assets like stocks or crypto. Simply upload your transaction data and receive a comprehensive breakdown of your capital gains, losses, and tax discounts for each financial year.
             </p>
         </section>
 
         <section>
             <h2>Instructions</h2>
             <p class="paragraph-text">
-                Follow these simple steps to calculate your capital gains tax. Each section below provides detailed guidance on preparing your data and understanding the results.
+                Follow these simple steps to optimally calculate your capital gains tax. Each section below provides detailed guidance on preparing your data and understanding the results.
             </p>
 
             <div class="title-dropdown">
@@ -36,19 +36,19 @@
                         <ul>
                             <li>Make sure that you have a way of downloading your history of executed trades (further explained in the next section)</li>
                             <li>Simply import either a CSV or Excel file of your trade history and then the tool will calculate your capital gains tax optimally</li>
-                            <li>You will be taken to a payment portal for a $40 payment to then download an Excel file, this will contain all the information about the minimal capital gains tax you must pay, possibly saving you hundreds!</li>
+                            <li>You will be taken to a payment portal for a $40 payment to then download an Excel file, this file will contain all the information about the minimal capital gains tax you must pay, possibly saving you hundreds!</li>
                             <li>An example result and how to intepret it is shown in the last section below</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <div class="title-dropdown">
+            <div class="title-dropdown-large">
                 <div class="title-dropdown-header" onclick="toggleDropdown(this)">
                     <h3>Input Trade History File</h3>
                     <span class="title-dropdown-arrow">▼</span>
                 </div>
-                <div class="title-dropdown-content">
+                <div class="title-dropdown-large-content">
                     <div class="dropdown-content-inner">
                         <p>If you trade with NabTrade or CommSec then the process is highly automated, but as long as you can download all your trade history then any service will work, just follow the steps below</p>
                         <div class="dropdown">
@@ -85,6 +85,9 @@
                                         <li>If you want to combine trades from multiple accounts then follow the above steps for the other accounts and combine the trades into a single csv</li>
                                         <li>Now go to the bottom of this page and import that CSV file to calculate your capital gains tax!</li>
                                     </ul>
+                                    <div class="dropdown-content-inner">
+                                        <img src="../static/images/commsec_trades_example.png">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -97,11 +100,14 @@
                                 <div class="dropdown-content-inner">
                                     <ul>
                                         <li>Download your trade history from whatever service you use, ideally in a CSV or Excel format</li>
-                                        <li>Create an Excel file where you will save all of your executed trades</li>
-                                        <li>Make sure that the column names and value format is <b>exactly</b> the same as the example below</li>
-                                        <li>Remember that the value for transaction_amount should <b>include</b> any trading fees!</li>
-                                        <li>Save the file as a .xlsx file and then import it using the button below to calculate your capital gains tax!</li>
+                                        <li>Create an Excel file or modify the file you have downloaded to match the format shown below</li>
+                                        <li>Make sure that the column names and value formats are <b>exactly</b> the same as the example below</li>
+                                        <li>Remember that the value for transaction_amount should <b>include</b> any trading fees</li>
+                                        <li>Save the file as a .csv or .xlsx file and then import it using the button below to calculate your capital gains tax!</li>
                                     </ul>
+                                    <div class="dropdown-content-inner">
+                                        <img src="../static/images/manual_trades_example.png">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +125,7 @@
                         <ul>
                             <li>You may get a dialog that short selling is detected, this can be no problem as you may have been awarded stock without explicitly buying it, however there is a chance that the calculator missed a stock split, or ticker change, or the stock was delisted, so please review the stock in question to ensure that short selling is applicable</li>
                             <li>Avoid including any empty rows or null values if you are manually putting together the input or adding data from different accounts into one CSV or Excel sheet</li>
-                            <li>Make sure that the columns of the input CSV or Excel sheet are <b>exactly</b> as described in the above section for the relevant input type (NabTrade, CommSec, or other)</li>
+                            <li>Make sure that the columns of the input CSV or Excel sheet format are <b>exactly</b> as described in the above section for the relevant input type (NabTrade, CommSec, or other)</li>
                         </ul>
                     </div>
                 </div>
@@ -133,10 +139,11 @@
                 <div class="title-dropdown-content">
                     <div class="dropdown-content-inner">
                         <ul>
-                            <li>Below is an image of an example Excel file that you will get after providing the correct input and payment</li>
+                            <li>After uploading the correct input file and completing payment an Excel file will be downloaded by your browser which will contain the results of the calculator</li>
                             <li>The file will have mutiple sheets, one for each financial year that you have executed trades</li>
-                            <li>At the bottom of each sheet there is a breakdown of the your total capital gain, loss, and capital gains discount for the year. These are the exact fields you need to fill out in your tax form for capital gains from non-physical assets such as stocks or crypto</li>
-                            <li>If you find that in previous years you have paid too much capital gains tax, you can add the overpaid amount to the "Unapplied Net Capital Losses Caried Forward" section in your tax form, and if your loss outweighs your gain you would also put it in that section</li>
+                            <li>At the bottom of each sheet there is a breakdown of your total capital gain, loss, and capital gains discount for the year. These are the exact fields you need to fill out in your tax form for capital gains from assets such as stocks or crypto</li>
+                            <li>If you find that in previous years you have paid too much capital gains tax, you can add the overpaid amount to the "Unapplied Net Capital Losses Caried Forward" section in your tax form, and if your loss outweighs your gain, you would also put it in that section</li>
+                            <li>In the "Calculator Result" section, click on the drop down and you will see an image of an example Excel file that this calculator generates</li>
                         </ul>
                     </div>
                 </div>
@@ -146,20 +153,17 @@
         <section>
             <h2>Calculator Result</h2>
             <p class="paragraph-text">
-                Once you've uploaded your CSV file, your detailed capital gains tax calculation will appear here. The results will include a comprehensive breakdown of all transactions, gains, losses, and your final tax liability.
+                Once you've uploaded your CSV or Excel file, your detailed capital gains tax calculation will be downloaded as an Excel file and will look like the image in the below drop down. The results will include a comprehensive breakdown of all your transactions, gains, losses, and tax discounts for each financial year you have traded, optimised for paying the minimum possible CGT!
             </p>
 
-            <div class="title-dropdown">
+            <div class="title-dropdown-large">
                 <div class="title-dropdown-header" onclick="toggleDropdown(this)">
                     <h3>Example of Calculator Output</h3>
                     <span class="title-dropdown-arrow">▼</span>
                 </div>
-                <div class="title-dropdown-content">
+                <div class="title-dropdown-large-content">
                     <div class="dropdown-content-inner">
-                        <ul>
-                            <li>Below is an example of the .xlsx file you will get after successfully calculating your lowest capital gains tax</li>
-                        </ul>
-                        <img src="https://via.placeholder.com/800x400/1e3a8a/ffffff?text=Your+Result+Chart+Will+Appear+Here" alt="Result Chart Placeholder">
+                        <img src="../static/images/cgt_report_example.png">
                     </div>
                 </div>
             </div>
