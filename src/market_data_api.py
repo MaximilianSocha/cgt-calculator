@@ -75,9 +75,5 @@ def handle_splits_and_ticker_changes(trades_df):
         symbol_df = trades_df[trades_df["symbol"] == symbol]
         trade_dates = sorted(symbol_df["trade_date"].to_list())
 
-        # Download ticker change data from here https://stockanalysis.com/actions/changes/2022/
-        # and if needed from https://www.asx.com.au/markets/market-resources/asx-codes-and-descriptors/asx-code-changes
-        # It will only have to be updated once a year around June/July, so no need for API
         apply_ticker_changes(trades_df, symbol)
-        #if symbol in ("TQQQ"):
-            #apply_stock_splits(trades_df, symbol, trade_dates)
+        apply_stock_splits(trades_df, symbol, trade_dates)
