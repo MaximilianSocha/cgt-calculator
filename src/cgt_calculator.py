@@ -2,8 +2,8 @@ from pathlib import Path
 import pandas as pd
 from lp_solver import minimise_tax_for_symbol_year
 from market_data_api import handle_splits_and_ticker_changes
-from mock_cgt_calculator import mock_handle_splits_and_ticker_changes
 from output_excel_writer import export_capital_gains_to_excel
+from test_helpers import mock_handle_splits_and_ticker_changes
 
 
 class CGTCalculator:
