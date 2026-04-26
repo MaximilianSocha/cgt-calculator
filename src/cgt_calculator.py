@@ -3,14 +3,16 @@ import pandas as pd
 from lp_solver import minimise_tax_for_symbol_year
 from market_data_api import handle_splits_and_ticker_changes
 from output_excel_writer import export_capital_gains_to_excel
-from test_helpers import mock_handle_splits_and_ticker_changes
+from test.test_helpers import mock_handle_splits_and_ticker_changes
 
 
 class CGTCalculator:
+    nabtrade = False
+
     def __init__(self, trade_history_csv_path: str):
         self.trades_df = self._parse_trade_history_file(trade_history_csv_path)
         self._initialise_trades_df()
-        #handle_splits_and_ticker_changes(self.trades_df)
+        #handle_splits_and_ticker_changes(self.trades_df, self.nabtrade)
         # While I don't have an alphavantage subscription
         mock_handle_splits_and_ticker_changes(self.trades_df)
 
@@ -65,8 +67,10 @@ class CGTCalculator:
         return trades_df
 
     def _parse_nabtrade_history_file(self, trade_history_path) -> pd.DataFrame:
+        self.nabtrade = True
         trades = pd.read_excel(trade_history_path, sheet_name=[3, 4], skiprows=1)
         trades_df = pd.DataFrame()
+        # TODO: Apply stock splits here and skip later for nabtrade
         for df in trades.values():
             # Apply ticker chanes
             df["Movement Type"] = df["Movement Type"].astype(str)
@@ -313,6 +317,6 @@ class CGTCalculator:
 
 if __name__ == "__main__":
     results_per_fy = CGTCalculator(
-        str(Path(__file__).parent.parent / "trade_history_commsec.csv")
+        str(Path(__file__).parent.parent / "trade_history_bubbles.xlsx")
     ).execute()
     export_capital_gains_to_excel(results_per_fy)

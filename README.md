@@ -16,7 +16,7 @@ Download trade history from the nabtrade site and save it as a .xlsx file
 
 
 # NOTES
-Unapplied Net Capital Losses Caried Forward:
+Unapplied Net Capital Losses Carried Forward:
 From previous years if too much tax was paid it would go here
 This is also used when the calculated net capital gain for a financial year is negative.
 

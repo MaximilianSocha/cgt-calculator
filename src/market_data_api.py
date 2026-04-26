@@ -9,6 +9,7 @@ SPLITS_URL = "https://www.alphavantage.co/query?function=SPLITS"
 OVERVIEW_URL = "https://www.alphavantage.co/query?function=OVERVIEW"
 
 TICKER_CHANGES_DF = pd.read_csv(Path(__file__).parent / "ticker_change_data.csv")
+TICKER_CHANGES_DF["date"] = pd.to_datetime(TICKER_CHANGES_DF["date"], dayfirst=True)
 
 def get_alpha_vantage_api_key():
     load_dotenv()
@@ -21,19 +22,40 @@ def get_company_overview_api_url(symbol):
     return f"{OVERVIEW_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()}"
 
 
-def apply_ticker_changes(trades_df, symbol):
-    old_ticker_row = TICKER_CHANGES_DF[TICKER_CHANGES_DF["old_ticker"] == symbol]
-    new_ticker = ""
-    while not old_ticker_row.empty:
-        new_ticker = TICKER_CHANGES_DF.loc[old_ticker_row.index[0], "new_ticker"]
-        old_ticker_row = TICKER_CHANGES_DF[
-            TICKER_CHANGES_DF["old_ticker"] == new_ticker
-        ]
+def apply_ticker_changes(trades_df, symbol, earliest_trade_date):
+    # Only consider changes that happened on or after the symbol was active
+    relevant = TICKER_CHANGES_DF[
+        TICKER_CHANGES_DF["date"] >= earliest_trade_date
+    ].sort_values("date")
+
+    new_ticker = symbol
+    while True:
+        match = relevant[relevant["old_ticker"] == new_ticker]
+        if match.empty:
+            break
+        # Follow the earliest rename that applies
+        row = match.iloc[0]
+        new_ticker = row["new_ticker"]
     
-    if new_ticker:
-        old_symbol_df = trades_df[trades_df["symbol"] == symbol]
-        for index in old_symbol_df.index:
-            trades_df.loc[index, "symbol"] = new_ticker
+        if new_ticker != symbol:
+            # This is checking if in the trade history there is a sell order
+            # which occurs after the ticker change date which is for the new ticker.
+            # This is not full-proof, however, it stops replacing symbols in the trade history
+            # when it is not necessary by only doing so if there is a corresponding sell action
+            # for the new symbol.
+            change_applies = not trades_df[
+                (trades_df["symbol"] == new_ticker)
+                & (trades_df["trade_date"] > row["date"])
+                & (trades_df["side"] == "SELL")
+            ].empty
+
+            if change_applies:
+                old_symbol_df = trades_df[trades_df["symbol"] == symbol]
+                for index in old_symbol_df.index:
+                    trades_df.loc[index, "symbol"] = new_ticker
+
+        # Now only look for renames after this change occurred
+        relevant = relevant[relevant["date"] >= row["date"]]
 
 
 def apply_stock_splits(trades_df, symbol, sorted_trade_dates):
@@ -68,12 +90,18 @@ def apply_stock_splits(trades_df, symbol, sorted_trade_dates):
                 trade_date_index += 1
 
 
-def handle_splits_and_ticker_changes(trades_df):
+def handle_splits_and_ticker_changes(trades_df, nabtrade=False):
 
     symbols = trades_df["symbol"].unique()
     for symbol in symbols:
         symbol_df = trades_df[trades_df["symbol"] == symbol]
         trade_dates = sorted(symbol_df["trade_date"].to_list())
 
-        apply_ticker_changes(trades_df, symbol)
+        if not nabtrade:
+            apply_ticker_changes(trades_df, symbol, trade_dates[0])
+        # Stock symbols are not guaranteed to be unique across exchanges.
+        # This means that there is a small possibility that splits will
+        # be applied to wrong stocks, with the current API this cannot be changed.
+        # In future a different finance service would have to be used and exchange
+        # codes would be kept for eachsymbol.
         apply_stock_splits(trades_df, symbol, trade_dates)

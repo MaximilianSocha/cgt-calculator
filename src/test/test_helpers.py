@@ -80,5 +80,5 @@ def mock_handle_splits_and_ticker_changes(trades_df):
         symbol_df = trades_df[trades_df["symbol"] == symbol]
         trade_dates = sorted(symbol_df["trade_date"].to_list())
 
-        apply_ticker_changes(trades_df, symbol)
+        apply_ticker_changes(trades_df, symbol, trade_dates[0])
         apply_stock_splits(trades_df, symbol, trade_dates)
