@@ -4,7 +4,7 @@ import numpy as np
 from pandas import Timestamp
 import pytest
 
-from mock_cgt_calculator import MockCGTCalculator
+from test.mock_cgt_calculator import MockCGTCalculator
 
 @pytest.fixture
 def path_to_csv():

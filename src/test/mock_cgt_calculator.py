@@ -1,5 +1,5 @@
 from cgt_calculator import CGTCalculator
-from test_helpers import mock_handle_splits_and_ticker_changes
+from test.test_helpers import mock_handle_splits_and_ticker_changes
 
 class MockCGTCalculator(CGTCalculator):
 

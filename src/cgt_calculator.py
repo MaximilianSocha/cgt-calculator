@@ -57,7 +57,7 @@ class CGTCalculator:
 
         # Verify if these transaction are from nabtrade
         elif "Account Name" in trades_df.columns:
-            col_upper = trades_df["Account Name"].astype(str).str.upper()
+            col_upper = trades_df["Account Name"].dropna().astype(str).str.upper()
             for value in col_upper.values:
                 if "NABTRADE" in value:
                     trades_df = self._parse_nabtrade_history_file(trade_history_path)
