@@ -317,6 +317,6 @@ class CGTCalculator:
 
 if __name__ == "__main__":
     results_per_fy = CGTCalculator(
-        str(Path(__file__).parent.parent / "trade_history_bubbles.xlsx")
+        str(Path(__file__).parent.parent / "trade_history_examples" / "trade_history_bubbles.xlsx")
     ).execute()
     export_capital_gains_to_excel(results_per_fy)
