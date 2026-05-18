@@ -12,11 +12,12 @@ body {
 }
 
 header {
-    font-family: 'Arial Black', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Arial Nova', Arial, sans-serif;
+    letter-spacing: 1px;
     background-color: #1e3a8a;
     color: white;
-    padding: 1.5rem 0;
-    padding-left: 5%;
+    padding: 1rem 0;
+    padding-left: 3%;
     text-align: left;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     position: sticky;
@@ -24,9 +25,16 @@ header {
 }
 
 header h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 600;
 }
+
+.logo-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
 
 .container {
     max-width: 1500px;

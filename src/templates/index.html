@@ -9,7 +9,10 @@
 </head>
 <body>
     <header>
-        <h1>CGT Calculator</h1>
+        <h1 class="logo-header">
+            <img src="../static/images/cgt_logo.png" alt="CGT Logo" width="126" height="70">
+            <span style="position: relative; top: 9px;">Calculator</span>
+        </h1>
     </header>
 
     <div class="container">
@@ -224,7 +227,7 @@
         <div class="modal-content">
             <div class="modal-header">Complete Your Purchase</div>
             <div class="modal-body">
-                <p>Price: $49.99 AUD</p>
+                <p>Price: $19.99 AUD</p>
                 <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Complete payment to download your CGT report.</p>
                 <form id="payment-form">
                     <div id="payment-element"></div>
@@ -232,7 +235,7 @@
                     <div class="modal-buttons" style="margin-top: 1.5rem;">
                         <button type="button" class="modal-button modal-button-secondary" onclick="closePaymentModal()">Cancel</button>
                         <button type="submit" class="modal-button modal-button-primary" id="payBtn">
-                            Pay $49.99
+                            Pay $19.99
                         </button>
                     </div>
                 </form>
