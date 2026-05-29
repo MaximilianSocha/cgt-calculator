@@ -379,11 +379,11 @@ footer {
     background-color: #1e3a8a;
     color: white;
     text-align: center;
-    padding: 2rem;
-    margin-top: 3rem;
+    padding: 1.25rem;
+    margin-top: 1rem;
 }
 
 footer p {
-    font-size: 0.95rem;
+    font-size: 0.75rem;
     line-height: 1.8;
 }
