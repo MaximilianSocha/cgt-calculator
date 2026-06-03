@@ -159,7 +159,7 @@ def export_capital_gains_to_excel(data_dict, filename="capital_gains_report.xlsx
             ("Total Capital Gain", fy_data.get("total_capital_gain", 0)),
             ("Loss", fy_data.get("loss", 0)),
             ("Capital Gains Discount", fy_data.get("capital_gain_discount", 0)),
-            ("Net Capital Gain", fy_data.get("taxable_capital_gain", 0)),
+            ("Taxable Capital Gain", fy_data.get("taxable_capital_gain", 0)),
         ]
 
         for label, value in summary_items:

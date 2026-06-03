@@ -223,6 +223,8 @@ class CGTCalculator:
             results_per_fy[fy] = dict(
                 # key: symbol, value: list of tuples
                 buy_and_sell_pairs={},
+                short_term=0,
+                long_term=0,
                 total_capital_gain=0,
                 capital_gain_discount=0,
                 loss=0,
@@ -296,21 +298,24 @@ class CGTCalculator:
                             (buy_date, sell_date, qty_sold, per_unit_gain)
                         ]
 
-                results_per_fy[fy]["total_capital_gain"] += (
-                    result["short_term"] + result["long_term"] + short_sell_gain
-                )
-                results_per_fy[fy]["capital_gain_discount"] += 0.5 * result["long_term"]
+                results_per_fy[fy]["short_term"] += (result["short_term"] + short_sell_gain)
+                results_per_fy[fy]["long_term"] += result["long_term"]
                 results_per_fy[fy]["loss"] += result["loss"]
                 results_per_fy[fy]["short_sell_gain"] += short_sell_gain
-                # Taxable gain includes raw gain, subtracted CGT discount, subtracted loss, and then short sell gain on top
-                results_per_fy[fy]["taxable_capital_gain"] += (
-                    result["taxable"] + short_sell_gain
-                )
 
             if not allow_short_selling and short_sell_symbols:
                 raise ValueError(
                     f"Short selling detected on symbols: {', '.join(short_sell_symbols)}"
                 )
+                
+            results_per_fy[fy]["total_capital_gain"] = results_per_fy[fy]["short_term"] + results_per_fy[fy]["long_term"]
+            # CGT discount is long term gain minus remaining loss multiplied by 0.5
+            results_per_fy[fy]["capital_gain_discount"] = 0.5 * max(results_per_fy[fy]["long_term"] - max(results_per_fy[fy]["loss"] - results_per_fy[fy]["short_term"], 0), 0)
+            # Taxable gain includes raw gain, subtracted loss, subtracted CGT discount, and then short sell gain on top
+            results_per_fy[fy]["taxable_capital_gain"] = max(results_per_fy[fy]["short_term"] - results_per_fy[fy]["loss"], 0) + results_per_fy[fy]["capital_gain_discount"]
+            carried_loss = max(results_per_fy[fy]["loss"] - results_per_fy[fy]["total_capital_gain"], 0)
+            # Finally, subtract any unapplied carried losses, only applies when losses are larger than raw gain, so taxable gain becomes negative (carry forward)
+            results_per_fy[fy]["taxable_capital_gain"] -= carried_loss
 
         return results_per_fy
 

@@ -20,7 +20,6 @@ def minimise_tax_for_symbol_year(buys, sells, symbol):
             short_term=0.0,
             long_term=0.0,
             loss=0.0,
-            taxable=0.0,
             x=pd.DataFrame(columns=["buy_id", "sell_id", "quantity"]),
         )
 
@@ -161,11 +160,9 @@ def minimise_tax_for_symbol_year(buys, sells, symbol):
             )
     x_df = pd.DataFrame(rows)
 
-    taxable = A_prime + 0.5 * B_prime - L_prime
     return dict(
         short_term=A_prime,  # gain from short term
         long_term=B_prime,  # gain from long term
         loss=L_prime,
-        taxable=taxable,
         x=x_df,
     )
