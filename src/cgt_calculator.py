@@ -39,18 +39,18 @@ class CGTCalculator:
         }
         if not commsec_cols - set(trades_df.columns):
             new_columns = trades_df["Details"].str.split(" ", expand=True, n=3)
-            new_columns.columns = ["side", "quantity", "symbol", "at_price"]
+            new_columns["Reference"] = trades_df["Reference"]
+            new_columns.columns = ["side", "quantity", "symbol", "at_price", "Reference"]
             new_columns["side"] = new_columns["side"].replace({"B": "BUY", "S": "SELL"})
             # Filter out non buys and sells
-            new_columns = new_columns[new_columns.isin(["BUY", "SELL"])]
-            trades_df = trades_df.join(new_columns)
+            new_columns = new_columns[new_columns["side"].isin(["BUY", "SELL"])]
+            trades_df = pd.merge(new_columns, trades_df, on='Reference', how='left')
 
-            trades_df = trades_df.rename(
-                columns={
-                    "Date": "trade_date",
-                    "Balance($)": "transaction_amount",
-                }
+            trades_df["transaction_amount"] = trades_df["Debit($)"].where(
+                trades_df["Debit($)"].notna(), trades_df["Credit($)"]
             )
+            trades_df = trades_df.rename(columns={"Date": "trade_date"})
+
             trades_df = trades_df[
                 ["side", "symbol", "trade_date", "quantity", "transaction_amount"]
             ]
@@ -322,6 +322,6 @@ class CGTCalculator:
 
 if __name__ == "__main__":
     results_per_fy = CGTCalculator(
-        str(Path(__file__).parent.parent / "trade_history_examples" / "trade_history_bubbles.xlsx")
+        str(Path(__file__).parent.parent / "trade_history_examples" / "trade_history_commsec.csv")
     ).execute()
     export_capital_gains_to_excel(results_per_fy)
