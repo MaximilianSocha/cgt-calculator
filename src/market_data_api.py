@@ -1,3 +1,4 @@
+import math
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import datetime
@@ -87,6 +88,8 @@ def apply_stock_splits(trades_df, symbol, sorted_trade_dates):
                 ].index[0]
                 # multiply the quantity to reflect all splits which occurred after trade date
                 trades_df.loc[row_index, "quantity"] *= split_factor
+                # assume partial shares are rounded up to ensure solution exists
+                trades_df.loc[row_index, "quantity"] = math.ceil(trades_df.loc[row_index, "quantity"])
                 trade_date_index += 1
 
 
@@ -103,5 +106,5 @@ def handle_splits_and_ticker_changes(trades_df, nabtrade=False):
         # This means that there is a small possibility that splits will
         # be applied to wrong stocks, with the current API this cannot be changed.
         # In future a different finance service would have to be used and exchange
-        # codes would be kept for eachsymbol.
+        # codes would be kept for each symbol.
         apply_stock_splits(trades_df, symbol, trade_dates)
