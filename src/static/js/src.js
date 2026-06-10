@@ -161,7 +161,7 @@ document
       if (error) {
         document.getElementById("card-errors").textContent = error.message;
         payBtn.disabled = false;
-        payBtn.textContent = "Pay $49.99";
+        payBtn.textContent = "Pay $19.99";
       } else {
         const paymentIntentId = clientSecret.split("_secret_")[0];
 
@@ -190,16 +190,16 @@ document
           // Reset
           sessionId = null;
           payBtn.disabled = false;
-          payBtn.textContent = "Pay $49.99";
+          payBtn.textContent = "Pay $19.99";
         } else {
           alert("Error verifying payment: " + verifyData.error);
           payBtn.disabled = false;
-          payBtn.textContent = "Pay $49.99";
+          payBtn.textContent = "Pay $19.99";
         }
       }
     } catch (error) {
       alert("Payment error: " + error.message);
       payBtn.disabled = false;
-      payBtn.textContent = "Pay $49.99";
+      payBtn.textContent = "Pay $19.99";
     }
   });

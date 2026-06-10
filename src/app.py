@@ -234,7 +234,7 @@ def create_payment_intent():
     try:
         # Create payment intent with Stripe
         intent = stripe.PaymentIntent.create(
-            amount=4999,  # $49.99 in cents
+            amount=1999,  # $19.99 in cents
             currency="aud",
             metadata={"session_id": session_id},
         )
