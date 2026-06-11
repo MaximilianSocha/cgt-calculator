@@ -13,7 +13,7 @@ TICKER_CHANGES_DF = pd.read_csv(Path(__file__).parent / "ticker_change_data.csv"
 TICKER_CHANGES_DF["date"] = pd.to_datetime(TICKER_CHANGES_DF["date"], dayfirst=True)
 
 def get_alpha_vantage_api_key():
-    load_dotenv()
+    load_dotenv(override=True)
     return os.getenv("ALPHAVANTAGE_API_KEY")
 
 def get_splits_api_url(symbol):
