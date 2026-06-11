@@ -282,7 +282,7 @@ h2 {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 1100;
     left: 0;
     top: 0;
     width: 100%;
@@ -368,7 +368,6 @@ h2 {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 1rem;
-    margin-bottom: 1rem;
 }
 
 .spinner-container {
