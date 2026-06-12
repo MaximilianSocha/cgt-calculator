@@ -282,7 +282,7 @@ h2 {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1100;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
@@ -298,8 +298,8 @@ h2 {
 
 .modal-content {
     background-color: white;
-    margin: 10% auto;
-    padding: 2rem;
+    margin: 5% auto;
+    padding: 1.5rem;
     border-radius: 10px;
     width: 90%;
     max-width: 500px;
