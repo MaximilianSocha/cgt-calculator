@@ -17,7 +17,7 @@ def get_alpha_vantage_api_key():
     return os.getenv("ALPHAVANTAGE_API_KEY")
 
 def get_splits_api_url(symbol):
-    print(f"{SPLITS_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()[11:-1]}", flush=True)
+    print(f"{SPLITS_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()[11:]}", flush=True)
     return f"{SPLITS_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()}"
 
 def get_company_overview_api_url(symbol):
@@ -64,6 +64,8 @@ def apply_stock_splits(trades_df, symbol, sorted_trade_dates):
 
     response = requests.get(get_splits_api_url(symbol))
     response_object = response.json()
+    
+    print(response.content, flush=True)
 
     if response_object and "data" in response_object:
         splits = response_object["data"]
