@@ -14,11 +14,10 @@ TICKER_CHANGES_DF["date"] = pd.to_datetime(TICKER_CHANGES_DF["date"], dayfirst=T
 
 def get_alpha_vantage_api_key():
     load_dotenv()
-    key = os.getenv("ALPHAVANTAGE_API_KEY")
-    print(key[:4], flush=True)
     return os.getenv("ALPHAVANTAGE_API_KEY")
 
 def get_splits_api_url(symbol):
+    print(f"{SPLITS_URL}&symbol={symbol}&apikey={"xxx"}", flush=True)
     return f"{SPLITS_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()}"
 
 def get_company_overview_api_url(symbol):
