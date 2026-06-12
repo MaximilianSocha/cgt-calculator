@@ -17,7 +17,7 @@ def get_alpha_vantage_api_key():
     return os.getenv("ALPHAVANTAGE_API_KEY")
 
 def get_splits_api_url(symbol):
-    print(f"{SPLITS_URL}&symbol={symbol}&apikey={"xxx"}", flush=True)
+    print(f"{SPLITS_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()[11:-1]}", flush=True)
     return f"{SPLITS_URL}&symbol={symbol}&apikey={get_alpha_vantage_api_key()}"
 
 def get_company_overview_api_url(symbol):
